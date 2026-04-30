@@ -1,24 +1,19 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
+from uuid import UUID
 
-class RegisterRequest(BaseModel):
+class UserCreate(BaseModel):
     first_name: str
     last_name: str
-    email: EmailStr
-    password: str
 
-class LoginRequest(BaseModel):
-    email: EmailStr
-    password: str
-
-class TokenResponse(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
+class UserUpdate(BaseModel):
+    first_name: str | None = None
+    last_name: str | None = None
 
 class UserResponse(BaseModel):
-    id: str
+    id: UUID
+    email: str
     first_name: str
     last_name: str
-    email: str
 
     class Config:
         from_attributes = True
