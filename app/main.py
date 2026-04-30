@@ -2,10 +2,15 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from app.db.session import get_db
+from app.auth import get_current_user
 
-app = FastAPI(title="StudySpot API")
+app = FastAPI(title="Caffin API")
 
 @app.get("/health")
 async def health(db: AsyncSession = Depends(get_db)):
     await db.execute(text("SELECT 1"))
     return {"status": "ok", "database": "connected"}
+
+@app.get("/me")
+async def me(user=Depends(get_current_user)):
+    return {"user_id": user["sub"], "email": user.get("email")}
