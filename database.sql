@@ -7,8 +7,8 @@ CREATE TYPE outlet_availability AS ENUM ('NONE', 'LOW', 'MEDIUM', 'HIGH');
 -- Users (auth managed by Supabase, this mirrors the profile)
 CREATE TABLE users (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  first_name    VARCHAR(20) NOT NULL,
-  last_name     VARCHAR(20) NOT NULL,
+  first_name    VARCHAR(50) NOT NULL,
+  last_name     VARCHAR(50) NOT NULL,
   email         VARCHAR(30) NOT NULL UNIQUE CHECK (email ~* '^[^@]+@[^@]+\.[^@]+$')
 );
 
@@ -16,7 +16,7 @@ CREATE TABLE users (
 CREATE TABLE locations (
   id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   google_place_id     TEXT NOT NULL UNIQUE,
-  name                VARCHAR(20) NOT NULL,
+  name                VARCHAR(100) NOT NULL,
   type                location_type NOT NULL,
   outlet_availability outlet_availability NOT NULL DEFAULT 'NONE'
 );
