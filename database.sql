@@ -9,7 +9,8 @@ CREATE TABLE users (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   first_name    VARCHAR(50) NOT NULL,
   last_name     VARCHAR(50) NOT NULL,
-  email         VARCHAR(30) NOT NULL UNIQUE CHECK (email ~* '^[^@]+@[^@]+\.[^@]+$')
+  email         VARCHAR(255) NOT NULL UNIQUE CHECK (email ~* '^[^@]+@[^@]+\.[^@]+$'),
+  username      VARCHAR(30) NOT NULL UNIQUE CHECK (username ~ '^[a-z0-9_]{3,30}$')
 );
 
 -- Locations
