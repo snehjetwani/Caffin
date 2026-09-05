@@ -26,7 +26,7 @@ async def create_location(
     db: AsyncSession = Depends(get_db)
 ):
     existing = await db.execute(
-        text("SELECT id, name, type, outlet_availability FROM locations WHERE google_place_id = :gid"),
+        text("SELECT id, google_place_id, name, type, outlet_availability FROM locations WHERE google_place_id = :gid"),
         {"gid": body.google_place_id}
     )
     row = existing.fetchone()

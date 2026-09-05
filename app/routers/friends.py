@@ -82,6 +82,7 @@ async def get_friends(
                 u.id as user_id,
                 u.first_name,
                 u.last_name,
+                u.username,
                 u.email,
                 f.date_established
             FROM friends f

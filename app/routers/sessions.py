@@ -108,6 +108,10 @@ async def get_session(
     if not row:
         raise HTTPException(status_code=404, detail="Session not found")
     mapping = dict(row._mapping)
+    # Profiles are private in the MVP; friends' sessions surface through /feed,
+    # which does its own friendship filtering.
+    if str(mapping["user_id"]) != user["sub"]:
+        raise HTTPException(status_code=403, detail="Not your session")
     duration = None
     if mapping["end_time"] and mapping["start_time"]:
         delta = mapping["end_time"] - mapping["start_time"]

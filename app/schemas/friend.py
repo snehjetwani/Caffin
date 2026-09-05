@@ -6,6 +6,7 @@ class FriendResponse(BaseModel):
     user_id: UUID
     first_name: str
     last_name: str
+    username: str
     email: str
     date_established: datetime
 
