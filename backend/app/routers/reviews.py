@@ -69,9 +69,25 @@ async def create_review(
             "opinion": body.opinion,
         }
     )
-    await db.commit()
     row = result.fetchone()
-    return {**row._mapping, "outlet_availability": body.outlet_availability}
+    review_id = str(row._mapping["id"])
+
+    # Persist photo URLs (already uploaded to Supabase Storage by the client).
+    photos = []
+    if body.photo_urls:
+        for url in body.photo_urls:
+            await db.execute(
+                text("INSERT INTO review_photos (review_id, url) VALUES (:rid, :url)"),
+                {"rid": review_id, "url": url},
+            )
+        photos = list(body.photo_urls)
+
+    await db.commit()
+    return {
+        **row._mapping,
+        "outlet_availability": body.outlet_availability,
+        "photos": photos,
+    }
 
 @router.get("/location/{location_id}", response_model=List[ReviewResponse])
 async def get_location_reviews(
@@ -83,7 +99,12 @@ async def get_location_reviews(
         text("""
             SELECT r.id, r.user_id, r.session_id, r.location_id,
                    r.stars, r.opinion, r.source, r.time_posted,
-                   l.outlet_availability
+                   l.outlet_availability,
+                   COALESCE(
+                       (SELECT array_agg(rp.url ORDER BY rp.id)
+                        FROM review_photos rp WHERE rp.review_id = r.id),
+                       ARRAY[]::text[]
+                   ) AS photos
             FROM reviews r
             JOIN locations l ON r.location_id = l.id
             WHERE r.location_id = :location_id
