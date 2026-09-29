@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from app.db.session import get_db
 from app.auth import get_current_user
-from app.routers import users, locations, sessions, reviews, friends
+from app.routers import users, locations, sessions, reviews, friends, recommendations
 
 app = FastAPI(title="Caffin API")
 
@@ -12,6 +12,7 @@ app.include_router(locations.router)
 app.include_router(sessions.router)
 app.include_router(reviews.router)
 app.include_router(friends.router)
+app.include_router(recommendations.router)
 
 @app.get("/health")
 async def health(db: AsyncSession = Depends(get_db)):

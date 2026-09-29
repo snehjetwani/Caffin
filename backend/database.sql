@@ -10,7 +10,8 @@ CREATE TABLE users (
   first_name    VARCHAR(50) NOT NULL,
   last_name     VARCHAR(50) NOT NULL,
   email         VARCHAR(255) NOT NULL UNIQUE CHECK (email ~* '^[^@]+@[^@]+\.[^@]+$'),
-  username      VARCHAR(30) NOT NULL UNIQUE CHECK (username ~ '^[a-z0-9_]{3,30}$')
+  username      VARCHAR(30) NOT NULL UNIQUE CHECK (username ~ '^[a-z0-9_]{3,30}$'),
+  embedding     vector(384)   -- taste embedding for recommendations (nullable until computed)
 );
 
 -- Locations
@@ -19,8 +20,13 @@ CREATE TABLE locations (
   google_place_id     TEXT NOT NULL UNIQUE,
   name                VARCHAR(100) NOT NULL,
   type                location_type NOT NULL,
-  outlet_availability outlet_availability NOT NULL DEFAULT 'NONE'
+  outlet_availability outlet_availability NOT NULL DEFAULT 'NONE',
+  embedding           vector(384)   -- profile embedding for recommendations (nullable until computed)
 );
+
+-- Fast cosine-similarity search over location embeddings.
+CREATE INDEX idx_locations_embedding
+  ON locations USING hnsw (embedding vector_cosine_ops);
 
 -- Sessions
 CREATE TABLE sessions (

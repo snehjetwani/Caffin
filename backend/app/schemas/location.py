@@ -1,11 +1,23 @@
 from pydantic import BaseModel
 from uuid import UUID
-from typing import Optional
+from typing import Optional, List
 
 class LocationCreate(BaseModel):
     google_place_id: str
     name: str
     type: str
+
+class LocationSeedItem(BaseModel):
+    google_place_id: str
+    name: str
+    type: str = "other"
+
+class LocationSeedRequest(BaseModel):
+    places: List[LocationSeedItem]
+
+class LocationSeedResponse(BaseModel):
+    created: int
+    skipped: int
 
 class LocationResponse(BaseModel):
     id: UUID
